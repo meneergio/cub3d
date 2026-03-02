@@ -6,7 +6,7 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 13:56:30 by dzotti            #+#    #+#             */
-/*   Updated: 2026/03/02 15:18:56 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 16:28:49 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ static int	count_map_lines(char **lines, int map_start)
 		i++;
 	}
 	while (lines[i] && is_line_empty(lines[i]))
-    	i++;
+		i++;
 	if (lines[i] != NULL && !is_line_empty(lines[i]))
-    	return (error_msg("Map is separated by empty lines"), -1);
+		return (error_msg("Map is separated by empty lines"), -1);
 	return (count);
 }
 

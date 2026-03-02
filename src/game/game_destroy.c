@@ -6,7 +6,7 @@
 /*   By: gwindey <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 10:38:01 by gwindey           #+#    #+#             */
-/*   Updated: 2026/03/02 10:38:04 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 16:09:38 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	game_destroy(t_game *g)
 			mlx_destroy_image(g->mlx, g->screen.img);
 		if (g->win)
 			mlx_destroy_window(g->mlx, g->win);
+		mlx_destroy_display(g->mlx);
+		free(g->mlx);
 	}
 	cfg_free(g->cfg);
 }
