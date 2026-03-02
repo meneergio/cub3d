@@ -34,6 +34,7 @@ SRC         = \
 	src/parsing/map/parse_map_padding.c \
 	src/parsing/map/parse_map_validate.c \
 	src/parsing/map/parse_map_closed.c \
+	src/parsing/map/parse_map_utils.c \
 	src/parsing/wrapper/parse_cub.c \
 	src/game/game_start.c \
 	src/game/game_destroy.c \
