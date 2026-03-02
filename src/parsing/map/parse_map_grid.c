@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   count_map_lines.c                                  :+:      :+:    :+:   */
+/*   parse_map_grid.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 13:56:30 by dzotti            #+#    #+#             */
-/*   Updated: 2026/02/12 13:56:30 by dzotti           ###   ########.fr       */
+/*   Updated: 2026/03/02 15:18:56 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,93 +15,77 @@
 static int	count_map_lines(char **lines, int map_start)
 {
 	int	i;
+	int	count;
 
 	if (!lines || map_start < 0)
 		return (0);
 	i = map_start;
-	while (lines[i])
-		i++;
-	while (i > map_start && lines[i - 1][0] == '\0')
-		i--;
-	return (i - map_start);
-}
-
-static int	fill_grid(char **grid, char **lines, int map_start, int h)
-{
-	int	i;
-
-	i = 0;
-	while (i < h)
+	count = 0;
+	while (lines[i] && !is_line_empty(lines[i]))
 	{
-		grid[i] = ft_strdup(lines[map_start + i]);
-		if (!grid[i])
-		{
-			grid[i] = NULL;
-			lines_free(grid);
-			error_msg("ft_strdup failed");
-			return (1);
-		}
+		count++;
 		i++;
 	}
-	grid[h] = NULL;
-	return (0);
+	while (lines[i] && is_line_empty(lines[i]))
+    	i++;
+	if (lines[i] != NULL && !is_line_empty(lines[i]))
+    	return (error_msg("Map is separated by empty lines"), -1);
+	return (count);
 }
 
-static int	map_width(char **grid)
+static int	fill_grid(t_cfg *cfg, char **lines, int map_start)
 {
-	int	max;
+	int	i;
+	int	j;
 	int	len;
-	int	i;
 
-	if (!grid)
-		return (0);
-	max = 0;
 	i = 0;
-	while (grid[i])
+	while (i < cfg->map.h)
 	{
-		len = ft_strlen(grid[i]);
-		if (len > max)
-			max = len;
+		cfg->map.grid[i] = malloc(sizeof(char) * (cfg->map.w + 1));
+		if (!cfg->map.grid[i])
+		{
+			while (--i >= 0)
+				free(cfg->map.grid[i]);
+			return (error_msg("Malloc failed in fill_grid"), 1);
+		}
+		len = ft_strlen(lines[map_start + i]);
+		ft_memcpy(cfg->map.grid[i], lines[map_start + i], len);
+		j = len;
+		while (j < cfg->map.w)
+			cfg->map.grid[i][j++] = ' ';
+		cfg->map.grid[i][cfg->map.w] = '\0';
 		i++;
 	}
-	return (max);
-}
-
-static int	finalize_grid(t_cfg *cfg, char **grid, int h)
-{
-	int	w;
-
-	w = map_width(grid);
-	if (w <= 0)
-	{
-		lines_free(grid);
-		return (error_msg("map width invalid"), 1);
-	}
-	if (pad_grid(grid, h, w) != 0)
-	{
-		lines_free(grid);
-		return (error_msg("padding invalid"), 1);
-	}
-	cfg->map.grid = grid;
-	cfg->map.h = h;
-	cfg->map.w = w;
+	cfg->map.grid[cfg->map.h] = NULL;
 	return (0);
 }
 
 int	parse_map_grid(t_cfg *cfg, char **lines, int map_start)
 {
-	int		h;
-	char	**grid;
+	int	i;
+	int	len;
 
-	if (!cfg || !lines || map_start < 0)
-		return (error_msg("parse_map_grid: bad args"), 1);
-	h = count_map_lines(lines, map_start);
-	if (h <= 0)
-		return (error_msg("map height invalid"), 1);
-	grid = malloc(sizeof(char *) * (h + 1));
-	if (!grid)
-		return (error_msg("fail malloc grid"), 1);
-	if (fill_grid(grid, lines, map_start, h) != 0)
+	cfg->map.h = count_map_lines(lines, map_start);
+	if (cfg->map.h <= 0)
 		return (1);
-	return (finalize_grid(cfg, grid, h));
+	cfg->map.w = 0;
+	i = 0;
+	while (i < cfg->map.h)
+	{
+		len = ft_strlen(lines[map_start + i]);
+		if (len > cfg->map.w)
+			cfg->map.w = len;
+		i++;
+	}
+	cfg->map.grid = malloc(sizeof(char *) * (cfg->map.h + 1));
+	if (!cfg->map.grid)
+		return (error_msg("Malloc failed for map grid"), 1);
+	if (fill_grid(cfg, lines, map_start))
+	{
+		free(cfg->map.grid);
+		cfg->map.grid = NULL;
+		return (1);
+	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 21:46:57 by dzotti            #+#    #+#             */
-/*   Updated: 2026/02/18 21:46:57 by dzotti           ###   ########.fr       */
+/*   Updated: 2026/03/02 15:08:42 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,35 +19,33 @@ static void	visited_free(char **visited)
 	if (!visited)
 		return ;
 	y = 0;
-	while (visited[y] != NULL)
-	{
-		free(visited[y]);
-		y++;
-	}
+	while (visited[y])
+		free(visited[y++]);
 	free(visited);
 }
 
 static char	**visited_create(int h, int w)
 {
 	int		y;
-	char	**visited;
+	char	**vis;
 
-	if (h <= 0 || w <= 0)
+	vis = malloc(sizeof(char *) * (h + 1));
+	if (!vis)
 		return (NULL);
-	visited = (char **)malloc(sizeof(char *) * (h + 1));
-	if (!visited)
-		return (NULL);
-	ft_bzero(visited, sizeof(char *) * (h + 1));
+	ft_bzero(vis, sizeof(char *) * (h + 1));
 	y = 0;
 	while (y < h)
 	{
-		visited[y] = (char *)malloc(sizeof(char) * w);
-		if (!visited[y])
-			return (visited_free(visited), NULL);
-		ft_bzero(visited[y], w);
+		vis[y] = malloc(sizeof(char) * w);
+		if (!vis[y])
+		{
+			visited_free(vis);
+			return (NULL);
+		}
+		ft_bzero(vis[y], w);
 		y++;
 	}
-	return (visited);
+	return (vis);
 }
 
 static int	flood(t_flood_ctx *ctx, int x, int y)
@@ -56,41 +54,29 @@ static int	flood(t_flood_ctx *ctx, int x, int y)
 		return (1);
 	if (ctx->grid[y][x] == ' ')
 		return (1);
-	if (ctx->grid[y][x] == '1')
-		return (0);
-	if (ctx->visited[y][x] == 1)
+	if (ctx->grid[y][x] == '1' || ctx->visited[y][x] == 1)
 		return (0);
 	ctx->visited[y][x] = 1;
-	if (flood(ctx, x + 1, y))
-		return (1);
-	if (flood(ctx, x - 1, y))
-		return (1);
-	if (flood(ctx, x, y + 1))
-		return (1);
-	if (flood(ctx, x, y - 1))
+	if (flood(ctx, x + 1, y) || flood(ctx, x - 1, y)
+		|| flood(ctx, x, y + 1) || flood(ctx, x, y - 1))
 		return (1);
 	return (0);
 }
 
 int	map_check_closed(t_cfg *cfg)
 {
-	t_flood_ctx	ctx;
-	char		**visited;
+	t_flood_ctx	f_ctx;
+	int			res;
 
-	if (!cfg || !cfg->map.grid || cfg->map.h <= 0 || cfg->map.w <= 0)
-		return (error_msg("map_check_closed: bad args"), 1);
-	if (cfg->player.x < 0 || cfg->player.y < 0
-		|| cfg->player.x >= cfg->map.w || cfg->player.y >= cfg->map.h)
-		return (error_msg("map_check_closed: player out of bounds"), 1);
-	visited = visited_create(cfg->map.h, cfg->map.w);
-	if (!visited)
-		return (error_msg("visited_create failed"), 1);
-	ctx.grid = cfg->map.grid;
-	ctx.visited = visited;
-	ctx.h = cfg->map.h;
-	ctx.w = cfg->map.w;
-	if (flood(&ctx, cfg->player.x, cfg->player.y))
-		return (visited_free(visited), error_msg("map not closed"), 1);
-	visited_free(visited);
+	f_ctx.h = cfg->map.h;
+	f_ctx.w = cfg->map.w;
+	f_ctx.grid = cfg->map.grid;
+	f_ctx.visited = visited_create(f_ctx.h, f_ctx.w);
+	if (!f_ctx.visited)
+		return (error_msg("Malloc failed for visited grid"), 1);
+	res = flood(&f_ctx, (int)cfg->player.x, (int)cfg->player.y);
+	visited_free(f_ctx.visited);
+	if (res)
+		return (error_msg("Map is not closed"), 1);
 	return (0);
 }

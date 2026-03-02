@@ -6,7 +6,7 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 13:41:22 by dzotti            #+#    #+#             */
-/*   Updated: 2026/03/02 10:32:22 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 13:49:50 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ enum	e_id
 	ID_C
 };
 
-/* ---- parsing (person A) ---- */
+/* ---- parsing ---- */
 void	cfg_init(t_cfg *cfg);
 void	cfg_free(t_cfg *cfg);
 int		error_msg(const char *msg);
@@ -180,8 +180,9 @@ int		pad_grid(char **grid, int h, int w);
 int		parse_map_validate_player(t_cfg *cfg);
 int		map_check_closed(t_cfg *cfg);
 int		parse_cub(const char *path, t_cfg *cfg);
+int		is_line_empty(char *line);
 
-/* ---- game (person B) ---- */
+/* ---- game ---- */
 int		game_start(t_cfg *cfg);
 void	game_destroy(t_game *g);
 void	game_init_player(t_game *g);
