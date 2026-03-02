@@ -6,7 +6,7 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 13:41:22 by dzotti            #+#    #+#             */
-/*   Updated: 2026/03/02 13:49:50 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 15:48:48 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ int		parse_map_grid(t_cfg *cfg, char **lines, int map_start);
 int		pad_grid(char **grid, int h, int w);
 int		parse_map_validate_player(t_cfg *cfg);
 int		map_check_closed(t_cfg *cfg);
+int		check_all_zeros(t_cfg *cfg);
 int		parse_cub(const char *path, t_cfg *cfg);
 int		is_line_empty(char *line);
 

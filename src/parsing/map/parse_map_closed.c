@@ -6,13 +6,13 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 21:46:57 by dzotti            #+#    #+#             */
-/*   Updated: 2026/03/02 15:08:42 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 15:43:35 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	visited_free(char **visited)
+void	visited_free(char **visited)
 {
 	int	y;
 
@@ -24,7 +24,7 @@ static void	visited_free(char **visited)
 	free(visited);
 }
 
-static char	**visited_create(int h, int w)
+char	**visited_create(int h, int w)
 {
 	int		y;
 	char	**vis;
@@ -38,17 +38,14 @@ static char	**visited_create(int h, int w)
 	{
 		vis[y] = malloc(sizeof(char) * w);
 		if (!vis[y])
-		{
-			visited_free(vis);
-			return (NULL);
-		}
+			return (visited_free(vis), NULL);
 		ft_bzero(vis[y], w);
 		y++;
 	}
 	return (vis);
 }
 
-static int	flood(t_flood_ctx *ctx, int x, int y)
+int	flood(t_flood_ctx *ctx, int x, int y)
 {
 	if (x < 0 || y < 0 || x >= ctx->w || y >= ctx->h)
 		return (1);
@@ -77,6 +74,8 @@ int	map_check_closed(t_cfg *cfg)
 	res = flood(&f_ctx, (int)cfg->player.x, (int)cfg->player.y);
 	visited_free(f_ctx.visited);
 	if (res)
+		return (error_msg("Map is not closed"), 1);
+	if (check_all_zeros(cfg))
 		return (error_msg("Map is not closed"), 1);
 	return (0);
 }
