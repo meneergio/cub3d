@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_cub.c                                       :+:      :+:    :+:   */
+/*   parse_cub.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 14:18:30 by dzotti            #+#    #+#             */
-/*   Updated: 2026/02/20 14:18:30 by dzotti           ###   ########.fr       */
+/*   Updated: 2026/03/03 10:07:51 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	parse_cub(const char *path, t_cfg *cfg)
 	cfg_init(cfg);
 	file = read_file_to_str(path);
 	if (!file)
-		return (fail_all(cfg, NULL, NULL, "read_file_to_str failed"));
+		return (fail_all(cfg, NULL, NULL, NULL));
 	lines = split_lines(file);
 	if (!lines)
 		return (fail_all(cfg, file, NULL, "split_lines failed"));

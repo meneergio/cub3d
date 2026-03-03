@@ -6,7 +6,7 @@
 /*   By: dzotti <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/05 16:43:07 by dzotti            #+#    #+#             */
-/*   Updated: 2026/02/05 16:43:07 by dzotti           ###   ########.fr       */
+/*   Updated: 2026/03/03 09:57:55 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static char	*read_fd_to_str(int fd)
 		n = read(fd, buf, BUFSIZE);
 	}
 	if (n < 0)
-		return (free(all), NULL);
+		return (error_sys("read"), free(all), NULL);
 	return (all);
 }
 
@@ -77,7 +77,7 @@ char	*read_file_to_str(const char *path)
 		return (NULL);
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-		return (NULL);
+		return (error_sys(path), NULL);
 	all = read_fd_to_str(fd);
 	close(fd);
 	return (all);

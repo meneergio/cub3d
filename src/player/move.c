@@ -6,7 +6,7 @@
 /*   By: gwindey <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 10:39:46 by gwindey           #+#    #+#             */
-/*   Updated: 2026/03/02 10:39:48 by gwindey          ###   ########.fr       */
+/*   Updated: 2026/03/02 16:42:41 by gwindey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,14 @@ void	player_move(t_game *g, double dx, double dy)
 	double	mx;
 	double	my;
 
-	mx = (dx > 0) ? MARGIN : -MARGIN;
-	my = (dy > 0) ? MARGIN : -MARGIN;
+	if (dx > 0)
+		mx = MARGIN;
+	else
+		mx = -MARGIN;
+	if (dy > 0)
+		my = MARGIN;
+	else
+		my = -MARGIN;
 	if (dx != 0 && can_move(g, g->pos_x + dx + mx, g->pos_y))
 		g->pos_x += dx;
 	if (dy != 0 && can_move(g, g->pos_x, g->pos_y + dy + my))
